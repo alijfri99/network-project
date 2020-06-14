@@ -10,4 +10,3 @@ except:
 while(True):
     data, addr = server.recvfrom(4096)
     print(data.decode("utf-8"))
-    print(addr)
