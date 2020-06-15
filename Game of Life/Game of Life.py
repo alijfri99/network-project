@@ -14,11 +14,22 @@ N = 30  # Grid size is N*N
 live = 255
 dead = 0
 state = [live, dead]
+id = 0
+client = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
 # Create random population (more dead than live):
 grid = np.random.choice(state, N * N, p=[0.3, 0.7]).reshape(N, N)
 # To learn more about not uniform random visit:
 # https://docs.scipy.org/doc/numpy-1.15.0/reference/generated/numpy.random.choice.html
+
+class Agent:
+    def __init__(self, X, Y,state):
+        global id
+        self.id = id
+        id = id+1
+        self.X = X
+        self.Y = Y
+        self.state = state
 
 def choose(temp):
     result = []
@@ -27,12 +38,11 @@ def choose(temp):
             if(temp[i][j] == dead):
                 result.append((i,j))
     (a,b) = random.choice(result)
-    send((a,b))
+    agent = Agent(b,a,dead)
+    udt_send(agent)
 
-def send(data):
-    client = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+def udt_send(data):
     client.sendto(str(data).encode("utf-8"),("127.0.0.1",8080))
-    client.close()
 
 def update(data):
     global grid
@@ -69,12 +79,7 @@ plt.show()
 
 # Can be useful:
 '''
-class Agent:
-    def __init__(self, id, X, Y,state):
-        self.id = id
-        self.X = X
-        self.Y = Y
-        self.state = state
+
     # Need more features? Add them!
 '''
 
