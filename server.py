@@ -1,4 +1,5 @@
 import socket
+from ..classes import agent
 
 server = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 try:
@@ -9,4 +10,4 @@ except:
 
 while(True):
     data, addr = server.recvfrom(4096)
-    print(data)
+    myAgent = agent.Agent(data)

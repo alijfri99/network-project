@@ -1,25 +1,21 @@
 # This code is
 #   based on https://nostarch.com/download/samples/PythonPlayground_sampleCh3.pdf
 #   prepared for Computer Networking Class: Ferdowsi University of Mashhad
-import agent as agent
+
 import matplotlib; matplotlib.use("TkAgg")  # For pycharm IDE only
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import random
 import socket
-import sys
-sys.path.insert(0,'../classes/agent')
-from agent import Agent
-
+import agent
 
 N = 30  # Grid size is N*N
 live = 255
 dead = 0
 state = [live, dead]
-address = ("127.0.0.1",8080)
-client = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 id = 0
+client = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
 # Create random population (more dead than live):
 grid = np.random.choice(state, N * N, p=[0.3, 0.7]).reshape(N, N)
@@ -35,13 +31,11 @@ def choose(temp):
             if(temp[i][j] == dead):
                 result.append((i,j))
     (a,b) = random.choice(result)
-    agent = a.agent(b,a,temp[a][b])
-    text = str(agent)
-    print(text)
-    udt_send(agent)
+    selectedAgent = agent.Agent(id,b,a,dead)
+    udt_send(selectedAgent)
 
 def udt_send(data):
-    client.sendto(bytes(str(data).encode("utf-8")),address)
+    client.sendto(str(data).encode("utf-8"),("127.0.0.1",8080))
 
 def update(data):
     global grid
@@ -77,10 +71,10 @@ ani = animation.FuncAnimation(fig, update, interval=500)
 plt.show()
 
 # Can be useful:
-
+'''
 
     # Need more features? Add them!
-
+'''
 
 '''
 create unique ID for agent based on UUID:

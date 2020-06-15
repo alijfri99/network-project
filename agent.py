@@ -1,10 +1,7 @@
 class Agent:
-    def __init__(self, X, Y,state):
-        global id
+    def __init__(self, id, X, Y,state):
         self.id = id
+        id = id+1
         self.X = X
         self.Y = Y
         self.state = state
-        id = id+1
-    def __str__(self):
-        return ("X: " + str(self.X) + ", " + "Y: " + str(self.Y) + ", " + "ID: " + str(self.id))
