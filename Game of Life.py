@@ -14,7 +14,6 @@ N = 30  # Grid size is N*N
 live = 255
 dead = 0
 state = [live, dead]
-id = 0
 client = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
 # Create random population (more dead than live):
@@ -22,24 +21,13 @@ grid = np.random.choice(state, N * N, p=[0.3, 0.7]).reshape(N, N)
 # To learn more about not uniform random visit:
 # https://docs.scipy.org/doc/numpy-1.15.0/reference/generated/numpy.random.choice.html
 
-
-
-def choose(temp):
-    result = []
-    for i in range(N):
-        for j in range(N):
-            if(temp[i][j] == dead):
-                result.append((i,j))
-    (a,b) = random.choice(result)
-    selectedAgent = agent.Agent(id,b,a,dead)
-    udt_send(selectedAgent)
-
 def udt_send(data):
     client.sendto(str(data).encode("utf-8"),("127.0.0.1",8080))
 
 def update(data):
     global grid
     temp = grid.copy()
+    result = []
     for i in range(N):
         for j in range(N):
             # Compute 8-neighbor sum
@@ -55,10 +43,13 @@ def update(data):
             if grid[i, j] == live:
                 if (total < 2) or (total > 3):
                     temp[i, j] = dead
+                    result.append((i,j))
             else:
                 if total == 3:
                     temp[i, j] = live
-            choose(temp)
+    (a,b) = random.choice(result)
+    selectedAgent = agent.Agent(b,a,dead)
+    udt_send(selectedAgent)
     mat.set_data(temp)
     grid = temp
     return mat
