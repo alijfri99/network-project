@@ -64,15 +64,19 @@ def update(data):
             else:
                 if total == 3:
                     temp[i, j] = live
-    (a,b) = random.choice(result)
-    selectedAgent = agent.Agent(b,a,dead)
-    pack = packet.packet(selectedAgent,seqNo)
-    init = initiator.initiator()
-    send(init, "ACKINIT")
-    send(pack,"ACK"+str(pack.seqNo))
-    seqNo = 1 - seqNo
-    mat.set_data(temp)
-    grid = temp
+    if(len(result)>0):
+        (a,b) = random.choice(result)
+        selectedAgent = agent.Agent(b,a,dead)
+        pack = packet.packet(selectedAgent,seqNo)
+        init = initiator.initiator(0,0)
+        #send(init, "ACKINIT")
+        #send(pack,"ACK"+str(pack.seqNo))
+        print(pack.msg)
+        print(pack.checksum)
+        print(len(pack.msg))
+        seqNo = 1 - seqNo
+        mat.set_data(temp)
+        grid = temp
     return mat
 
 

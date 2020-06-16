@@ -10,6 +10,9 @@ def calcsum(msg):
 		while(len(sum)!=8):
 			sum = int(sum[0],2) + int(sum[1:len(sum)],2)
 			sum = format(sum,"b")
+			if(len(sum)<8):
+				while(len(sum)!=8):
+					sum = "0" + sum
 	return(sum)
 
 def complement(input):
@@ -20,5 +23,3 @@ def complement(input):
 		elif(i=="1"):
 			result = result + "0"
 	return(result)
-
-print(complement(calcsum([255,255])))
