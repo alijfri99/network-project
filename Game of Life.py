@@ -10,6 +10,7 @@ import random
 import socket
 import agent
 import packet
+import initiator
 import pickle
 
 N = 30  # Grid size is N*N
@@ -27,13 +28,13 @@ grid = np.random.choice(state, N * N, p=[0.3, 0.7]).reshape(N, N)
 def udt_send(data):
     client.sendto(pickle.dumps(data),("127.0.0.1",8080))
 
-def send(pack):
+def send(pack,ackmsg):
 	udt_send(pack)
 	while(True):
 		try:
 			data, addr = client.recvfrom(500)
 			client.settimeout(1)
-			if(data.decode("utf-8")=="ACK"+str(pack.seqNo)):
+			if(data.decode("utf-8")==ackmsg):
 				return
 		except socket.timeout as e:
 			udt_send(pack)
@@ -66,7 +67,9 @@ def update(data):
     (a,b) = random.choice(result)
     selectedAgent = agent.Agent(b,a,dead)
     pack = packet.packet(selectedAgent,seqNo)
-    send(pack)
+    init = initiator.initiator()
+    send(init, "ACKINIT")
+    send(pack,"ACK"+str(pack.seqNo))
     seqNo = 1 - seqNo
     mat.set_data(temp)
     grid = temp
