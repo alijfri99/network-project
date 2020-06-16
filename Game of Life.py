@@ -9,6 +9,7 @@ import matplotlib.animation as animation
 import random
 import socket
 import agent
+import packet
 
 N = 30  # Grid size is N*N
 live = 255
@@ -23,6 +24,18 @@ grid = np.random.choice(state, N * N, p=[0.3, 0.7]).reshape(N, N)
 
 def udt_send(data):
     client.sendto(str(data).encode("utf-8"),("127.0.0.1",8080))
+
+def send(pack):
+	udt_send(pack)
+	while(True):
+		try:
+			data, addr = client.recvfrom(500)
+			client.settimeout(1)
+			if(data.decode("utf-8")=="ACK"+str(pack.seqNo)):
+				return
+		except socket.timeout as e:
+			udt_send(pack)
+
 
 def update(data):
     global grid
@@ -49,7 +62,8 @@ def update(data):
                     temp[i, j] = live
     (a,b) = random.choice(result)
     selectedAgent = agent.Agent(b,a,dead)
-    udt_send(selectedAgent)
+    pack = packet.packet(selectedAgent)
+    send(pack)
     mat.set_data(temp)
     grid = temp
     return mat
@@ -60,17 +74,6 @@ fig, ax = plt.subplots()
 mat = ax.matshow(grid)
 ani = animation.FuncAnimation(fig, update, interval=500)
 plt.show()
-
-# Can be useful:
-'''
-
-    # Need more features? Add them!
-'''
-
-'''
-create unique ID for agent based on UUID:
-    https://docs.python.org/3/library/uuid.html
-'''
 
 '''
 class packet():
