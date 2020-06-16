@@ -8,4 +8,4 @@ class Agent:
         self.Y = Y
         self.state = state
     def __str__(self):
-    	return("X: " + str(self.X) + ", Y: " + str(self.Y) + ", ID: " + str(self.id) + ", " + str(self.state))
+    	return("X: " + str(self.X) + ", Y: " + str(self.Y) + ", ID: " + str(self.id))

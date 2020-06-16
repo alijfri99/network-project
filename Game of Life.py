@@ -74,14 +74,24 @@ def update(data):
         for i in range(redundant):
             redundantBytes[i] = random.randint(0, 255)
         msg = redundantBytes + msg
-        pack = packet.packet(msg,seqNo)
         init = initiator.initiator(redundant+actualLen,redundant)
-        print(actualLen)
-        print(redundant)
-        print(len(msg))
-        #send(init, "ACKINIT")
-        #send(pack,"ACK"+str(pack.seqNo))
-        seqNo = 1 - seqNo
+        send(init, "ACKINIT")
+        numberOfPackets = int(len(msg)/394)
+        if(len(msg)%394!=0):
+            numberOfPackets = numberOfPackets + 1
+        packets = []
+        for i in range(numberOfPackets):
+            if(i<numberOfPackets-1):
+                pack = packet.packet(msg[i*394:(i+1)*394], seqNo)
+                seqNo = 1 - seqNo
+                packets.append(pack)
+            else:
+            	pack = packet.packet(msg[i*394:len(msg)], seqNo)
+            	packets.append(pack)
+
+        for pack in packets:
+            send(pack, "ACK"+str(pack.seqNo))
+
         mat.set_data(temp)
         grid = temp
     return mat
