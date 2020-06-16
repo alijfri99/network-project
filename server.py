@@ -49,5 +49,5 @@ while(True):
             else:
                 printmsg(packets, init)
         else:
-            msg = "NAK"
+            msg = "ACK" + str(1-seqNo)
             server.sendto(msg.encode("utf-8"), addr)
