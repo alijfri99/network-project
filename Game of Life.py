@@ -35,6 +35,7 @@ def send(pack,ackmsg):
 			data, addr = client.recvfrom(500)
 			client.settimeout(1)
 			if(data.decode("utf-8")==ackmsg):
+				print(data.decode("utf-8"))
 				return
 		except socket.timeout as e:
 			udt_send(pack)
