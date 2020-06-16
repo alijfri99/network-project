@@ -3,7 +3,7 @@ import pickle
 
 class packet():
 	def __init__(self,msg,seqNo):
-		self.msg = bytearray(pickle.dumps(msg))
+		self.msg = msg
 		self.seqNo = seqNo
 		self.checksum = tools.complement(tools.calcsum(self.msg))
 	def __str__(self):

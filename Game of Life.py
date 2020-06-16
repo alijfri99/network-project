@@ -67,13 +67,20 @@ def update(data):
     if(len(result)>0):
         (a,b) = random.choice(result)
         selectedAgent = agent.Agent(b,a,dead)
-        pack = packet.packet(selectedAgent,seqNo)
-        init = initiator.initiator(0,0)
+        msg = bytearray(pickle.dumps(selectedAgent))
+        actualLen = len(msg)
+        redundant = random.randint(500, 1500)
+        redundantBytes = bytearray(redundant)
+        for i in range(redundant):
+            redundantBytes[i] = random.randint(0, 255)
+        msg = redundantBytes + msg
+        pack = packet.packet(msg,seqNo)
+        init = initiator.initiator(redundant+actualLen,redundant)
+        print(actualLen)
+        print(redundant)
+        print(len(msg))
         #send(init, "ACKINIT")
         #send(pack,"ACK"+str(pack.seqNo))
-        print(pack.msg)
-        print(pack.checksum)
-        print(len(pack.msg))
         seqNo = 1 - seqNo
         mat.set_data(temp)
         grid = temp
