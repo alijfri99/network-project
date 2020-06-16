@@ -10,12 +10,14 @@ import random
 import socket
 import agent
 import packet
+import pickle
 
 N = 30  # Grid size is N*N
 live = 255
 dead = 0
 state = [live, dead]
 client = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+seqNo = 0
 
 # Create random population (more dead than live):
 grid = np.random.choice(state, N * N, p=[0.3, 0.7]).reshape(N, N)
@@ -23,7 +25,7 @@ grid = np.random.choice(state, N * N, p=[0.3, 0.7]).reshape(N, N)
 # https://docs.scipy.org/doc/numpy-1.15.0/reference/generated/numpy.random.choice.html
 
 def udt_send(data):
-    client.sendto(str(data).encode("utf-8"),("127.0.0.1",8080))
+    client.sendto(pickle.dumps(data),("127.0.0.1",8080))
 
 def send(pack):
 	udt_send(pack)
@@ -39,6 +41,7 @@ def send(pack):
 
 def update(data):
     global grid
+    global seqNo
     temp = grid.copy()
     result = []
     for i in range(N):
@@ -62,8 +65,9 @@ def update(data):
                     temp[i, j] = live
     (a,b) = random.choice(result)
     selectedAgent = agent.Agent(b,a,dead)
-    pack = packet.packet(selectedAgent)
+    pack = packet.packet(selectedAgent,seqNo)
     send(pack)
+    seqNo = 1 - seqNo
     mat.set_data(temp)
     grid = temp
     return mat

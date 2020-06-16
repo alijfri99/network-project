@@ -1,5 +1,6 @@
 import socket
 import packet
+import pickle
 
 server = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 seqNo = 0
@@ -11,9 +12,8 @@ except:
 
 while(True):
     data, addr = server.recvfrom(4096)
-    pack = data.decode("utf-8")
+    pack = pickle.loads(data)
     print(str(pack))
-    msg = "ACK" + str(seqNo)
-    seqNo = 1 - seqNo
+    msg = "ACK" + str(pack.seqNo)
     print(msg)
     server.sendto(msg.encode("utf-8"), addr)
